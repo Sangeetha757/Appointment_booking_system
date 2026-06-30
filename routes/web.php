@@ -29,7 +29,24 @@ use App\Http\Controllers\AdminAvailabilityController;
 
 // ## PUBLIC ROUTES ##
 Route::get('/', function () {
-    return view('homepage');
+    try {
+        // Try connecting to database
+        \Illuminate\Support\Facades\DB::connection()->getPdo();
+        return view('homepage');
+    } catch (\Exception $e) {
+        $dbConfig = config('database.connections.mysql');
+        if (isset($dbConfig['password'])) {
+            $dbConfig['password'] = empty($dbConfig['password']) ? 'EMPTY' : '***';
+        }
+        return response()->json([
+            'status' => 'Database connection failed',
+            'error' => $e->getMessage(),
+            'database_config_laravel_is_using' => $dbConfig,
+            'app_env' => env('APP_ENV'),
+            'app_debug' => env('APP_DEBUG'),
+            'app_key_exists' => !empty(env('APP_KEY')),
+        ], 500);
+    }
 })->name('homepage');
 
 
