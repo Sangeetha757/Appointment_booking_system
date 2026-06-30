@@ -38,6 +38,10 @@ RUN apt-get update && apt-get install -y \
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
+# Disable conflicting Apache MPM modules and enforce mpm_prefork
+RUN a2dismod mpm_event mpm_worker || true \
+    && a2enmod mpm_prefork
+
 # Set working directory
 WORKDIR /var/www/html
 
