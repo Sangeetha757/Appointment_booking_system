@@ -50,6 +50,10 @@ COPY --from=vendor /app/vendor/ vendor/
 COPY --from=frontend /app/public/build/ public/build/
 COPY . .
 
+# Copy and configure entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Expose correct port for Railway (port is auto-mapped)
 ENV PORT=8080
 EXPOSE 8080
